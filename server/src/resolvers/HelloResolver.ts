@@ -1,4 +1,4 @@
-import { ObjectType, Query, Resolver } from 'type-graphql';
+import { Query, Resolver } from 'type-graphql';
 
 @Resolver()
 export class HelloResolver {

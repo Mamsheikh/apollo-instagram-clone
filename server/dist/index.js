@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
 require("reflect-metadata");
-require("colors");
 const typeorm_1 = require("typeorm");
 const apollo_server_express_1 = require("apollo-server-express");
 const express_1 = __importDefault(require("express"));
@@ -31,7 +30,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     server.applyMiddleware({ app, path: '/api' });
     const PORT = process.env.PORT;
     app.listen(PORT, () => {
-        console.log(`[app]: running at http://localhost:${PORT}/api`.bgCyan.bold);
+        console.log(`[app]: running at http://localhost:${PORT}/api`);
     });
 });
 main().catch((error) => console.log('Root Error', error));

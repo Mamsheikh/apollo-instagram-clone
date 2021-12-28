@@ -7,9 +7,9 @@
   "database": "apollo-isnta",
   "synchronize": true,
   "logging": true,
-  "entities": ["build/entities/**/*.ts"],
-  "migrations": ["src/migration/**/*.ts"],
-  "subscribers": ["src/subscriber/**/*.ts"],
+  "entities": ["dist/entities/**/*.js"],
+  "migrations": ["dist/migration/**/*.ts"],
+  "subscribers": ["dist/subscriber/**/*.ts"],
   "cli": {
     "entitiesDir": "src/entities",
     "migrationsDir": "src/migration",

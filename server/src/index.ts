@@ -1,6 +1,5 @@
 require('dotenv').config();
 import 'reflect-metadata';
-import 'colors';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
@@ -23,7 +22,7 @@ const main = async () => {
   const PORT = process.env.PORT;
 
   app.listen(PORT, () => {
-    console.log(`[app]: running at http://localhost:${PORT}/api`.bgCyan.bold);
+    console.log(`[app]: running at http://localhost:${PORT}/api`);
   });
 };
 

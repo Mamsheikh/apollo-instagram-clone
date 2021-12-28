@@ -5,6 +5,7 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.5",
+    "colors": "^1.4.0",
     "dotenv": "^10.0.0",
     "nodemon": "^2.0.15",
     "ts-node": "^10.4.0",
@@ -12,6 +13,8 @@
   },
   "dependencies": {
     "apollo-server-express": "^2.25.2",
+    "argon2": "^0.28.3",
+    "class-validator": "^0.13.2",
     "graphql": "^15.8.0",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
@@ -20,7 +23,7 @@
   },
   "scripts": {
     "watch": "tsc -w ",
-    "start": "nodemon build/index.js",
+    "start": "nodemon dist/index.js",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   }
 }
