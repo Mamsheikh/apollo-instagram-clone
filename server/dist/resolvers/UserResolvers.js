@@ -27,8 +27,9 @@ const types_1 = require("../types/types");
 const entities_1 = require("../entities");
 const class_validator_1 = require("class-validator");
 const utils_1 = require("../lib/utils");
+const tokenHandler_1 = require("../utils/tokenHandler");
 let UserResolver = class UserResolver {
-    register({ email, username, password }) {
+    register({ res }, { email, username, password }) {
         return __awaiter(this, void 0, void 0, function* () {
             let errors = [];
             const userEmail = yield entities_1.User.findOne({ email });
@@ -56,6 +57,7 @@ let UserResolver = class UserResolver {
             try {
                 yield user.save();
                 yield entities_1.Profile.create({ username: user.username }).save();
+                (0, tokenHandler_1.createTokenCookie)(user, res);
                 return { ok: true };
             }
             catch (error) {
@@ -96,9 +98,10 @@ let UserResolver = class UserResolver {
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => types_1.RegisterResponse),
-    __param(0, (0, type_graphql_1.Args)()),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __param(1, (0, type_graphql_1.Args)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [types_1.RegisterVariables]),
+    __metadata("design:paramtypes", [Object, types_1.RegisterVariables]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "register", null);
 __decorate([

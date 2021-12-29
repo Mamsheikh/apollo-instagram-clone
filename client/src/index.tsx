@@ -13,6 +13,7 @@ import {
 const client = new ApolloClient({
   uri: 'http://localhost:5000/api',
   cache: new InMemoryCache(),
+  credentials: 'include',
 });
 ReactDOM.render(
   <ApolloProvider client={client}>

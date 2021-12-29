@@ -15,19 +15,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
+const cors_1 = __importDefault(require("cors"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const apollo_server_express_1 = require("apollo-server-express");
 const express_1 = __importDefault(require("express"));
 const type_graphql_1 = require("type-graphql");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, typeorm_1.createConnection)();
     const app = (0, express_1.default)();
+    app.use((0, cors_1.default)({
+        origin: 'http://localhost:3000',
+        credentials: true,
+    }));
+    app.use((0, cookie_parser_1.default)());
     app.get('/', (_, res) => res.send('Apollo Instagram API'));
     const server = new apollo_server_express_1.ApolloServer({
         schema: yield (0, type_graphql_1.buildSchema)({
             resolvers: [`${__dirname}/resolvers/**/*.{ts,js}`],
         }),
+        context: ({ res, req }) => ({ res, req }),
     });
-    server.applyMiddleware({ app, path: '/api' });
+    server.applyMiddleware({ app, path: '/api', cors: false });
     const PORT = process.env.PORT;
     app.listen(PORT, () => {
         console.log(`[app]: running at http://localhost:${PORT}/api`);

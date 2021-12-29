@@ -1,4 +1,4 @@
-import { Arg, Args, Mutation, Resolver } from 'type-graphql';
+import { Arg, Args, Ctx, Mutation, Resolver } from 'type-graphql';
 import {
   LoginResponse,
   RegisterResponse,
@@ -7,12 +7,15 @@ import {
 import { Profile, User } from '../entities';
 import { validate } from 'class-validator';
 import { formatErrors } from '../lib/utils';
+import { createTokenCookie } from '../utils/tokenHandler';
+import { MyContext } from 'src/types';
 // import {formatErrors} from '../../lib/utils'
 
 @Resolver(User)
 export class UserResolver {
   @Mutation(() => RegisterResponse)
   async register(
+    @Ctx() { res }: MyContext,
     @Args() { email, username, password }: RegisterVariables
   ): Promise<RegisterResponse> {
     let errors = [];
@@ -43,6 +46,7 @@ export class UserResolver {
     try {
       await user.save();
       await Profile.create({ username: user.username }).save();
+      createTokenCookie(user, res);
       return { ok: true };
     } catch (error) {
       console.log('Register error', error);
