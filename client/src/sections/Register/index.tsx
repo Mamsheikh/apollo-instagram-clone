@@ -1,14 +1,13 @@
 import { Formik, Form } from 'formik';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useRegisterMutation } from '../../generated/graphql';
 import logoLight from './assets/insta-logo.png';
 import appStore from './assets/app-store.png';
 import playStore from './assets/gg-play.png';
 import { AiFillFacebook, AiOutlineLoading } from 'react-icons/ai';
-import { InputField } from '../../lib/components';
+import { ButtonLoader, InputField } from '../../lib/components';
 
-export const Register = () => {
-  const navigate = useNavigate();
+export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [register] = useRegisterMutation();
   return (
     <div className=' bg-[#FAFAFA] p-8 flex justify-center'>
@@ -49,7 +48,7 @@ export const Register = () => {
                   });
                 }
                 if (data?.register.ok) {
-                  navigate('/login');
+                  history.push('/login');
                 }
               } catch (error) {
                 console.log('register', error);
@@ -83,11 +82,7 @@ export const Register = () => {
                   type='submit'
                   // disabled={!email || !username || !password || !password2}
                 >
-                  {isSubmitting ? (
-                    <AiOutlineLoading className='text-center text-2xl mx-auto' />
-                  ) : (
-                    <span>Sign up</span>
-                  )}
+                  {isSubmitting ? <ButtonLoader /> : <span>Sign up</span>}
                 </button>
               </Form>
             )}

@@ -24,16 +24,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const types_1 = require("../types/types");
-const entities_1 = require("../entities");
+const isUser_1 = require("./../middlewares/isUser");
+const Profile_1 = require("../entities/Profile");
+const User_1 = require("../entities/User");
 const class_validator_1 = require("class-validator");
 const utils_1 = require("../lib/utils");
 const tokenHandler_1 = require("../utils/tokenHandler");
+const constants_1 = require("../constants");
 let UserResolver = class UserResolver {
-    register({ res }, { email, username, password }) {
+    getUser(username) {
+        return User_1.User.findOne({ username });
+    }
+    me({ res }) {
+        return User_1.User.findOne({ username: res.locals.username });
+    }
+    register({ email, username, password }) {
         return __awaiter(this, void 0, void 0, function* () {
             let errors = [];
-            const userEmail = yield entities_1.User.findOne({ email });
-            const userUsername = yield entities_1.User.findOne({ username });
+            const userEmail = yield User_1.User.findOne({ email });
+            const userUsername = yield User_1.User.findOne({ username });
             if (userEmail) {
                 errors.push({ path: 'email', message: 'Email is already registered' });
             }
@@ -46,7 +55,7 @@ let UserResolver = class UserResolver {
                     errors,
                 };
             }
-            const user = yield entities_1.User.create({ email, username, password });
+            const user = yield User_1.User.create({ email, username, password });
             errors = yield (0, class_validator_1.validate)(user);
             if (errors.length > 0) {
                 return {
@@ -56,8 +65,7 @@ let UserResolver = class UserResolver {
             }
             try {
                 yield user.save();
-                yield entities_1.Profile.create({ username: user.username }).save();
-                (0, tokenHandler_1.createTokenCookie)(user, res);
+                yield Profile_1.Profile.create({ username: user.username }).save();
                 return { ok: true };
             }
             catch (error) {
@@ -69,10 +77,10 @@ let UserResolver = class UserResolver {
             }
         });
     }
-    login(usernameOrEmail, password) {
+    login({ res }, usernameOrEmail, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield entities_1.User.findOne(usernameOrEmail.includes('@')
+                const user = yield User_1.User.findOne(usernameOrEmail.includes('@')
                     ? { where: { email: usernameOrEmail } }
                     : { where: { username: usernameOrEmail } });
                 if (!user) {
@@ -88,6 +96,7 @@ let UserResolver = class UserResolver {
                         errors: [{ path: 'password', message: 'Incorrect Password' }],
                     };
                 }
+                (0, tokenHandler_1.createTokenCookie)(user, res);
                 return { ok: true, user };
             }
             catch (error) {
@@ -95,25 +104,53 @@ let UserResolver = class UserResolver {
             }
         });
     }
+    logout({ res }) {
+        return new Promise((resolve) => {
+            res.clearCookie(constants_1.COOKIE_NAME);
+            resolve(true);
+        });
+    }
 };
 __decorate([
-    (0, type_graphql_1.Mutation)(() => types_1.RegisterResponse),
-    __param(0, (0, type_graphql_1.Ctx)()),
-    __param(1, (0, type_graphql_1.Args)()),
+    (0, type_graphql_1.Query)(() => User_1.User, { nullable: true }),
+    __param(0, (0, type_graphql_1.Arg)('username')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, types_1.RegisterVariables]),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "getUser", null);
+__decorate([
+    (0, type_graphql_1.Query)(() => User_1.User, { nullable: true }),
+    (0, type_graphql_1.UseMiddleware)(isUser_1.isUser),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "me", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => types_1.RegisterResponse),
+    __param(0, (0, type_graphql_1.Args)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [types_1.RegisterVariables]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "register", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => types_1.LoginResponse),
-    __param(0, (0, type_graphql_1.Arg)('usernameOrEmail')),
-    __param(1, (0, type_graphql_1.Arg)('password')),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __param(1, (0, type_graphql_1.Arg)('usernameOrEmail')),
+    __param(2, (0, type_graphql_1.Arg)('password')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "logout", null);
 UserResolver = __decorate([
-    (0, type_graphql_1.Resolver)(entities_1.User)
+    (0, type_graphql_1.Resolver)(User_1.User)
 ], UserResolver);
 exports.UserResolver = UserResolver;
 //# sourceMappingURL=UserResolvers.js.map

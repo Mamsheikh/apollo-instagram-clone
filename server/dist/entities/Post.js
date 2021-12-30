@@ -14,8 +14,10 @@ const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
 const BaseColumn_1 = require("./BaseColumn");
 const User_1 = require("./User");
+const Comment_1 = require("./Comment");
 const class_validator_1 = require("class-validator");
 const constants_1 = require("../constants");
+const Like_1 = require("./Like");
 let Post = class Post extends BaseColumn_1.BaseColumns {
     generateURL() {
         this.imgURL = this.imgURL.startsWith('images/')
@@ -47,6 +49,14 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'username', referencedColumnName: 'username' }),
     __metadata("design:type", User_1.User)
 ], Post.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Comment_1.Comment, (comment) => comment.post),
+    __metadata("design:type", Array)
+], Post.prototype, "comments", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Like_1.Like, (like) => like.post),
+    __metadata("design:type", Array)
+], Post.prototype, "likes", void 0);
 __decorate([
     (0, typeorm_1.AfterLoad)(),
     __metadata("design:type", Function),

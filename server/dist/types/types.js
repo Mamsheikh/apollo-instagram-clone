@@ -9,10 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegisterVariables = exports.LoginResponse = exports.RegisterResponse = void 0;
+exports.RegisterVariables = exports.LoginResponse = exports.RegisterResponse = exports.PaginatedPost = void 0;
 const type_graphql_1 = require("type-graphql");
 const types_1 = require("../types");
 const User_1 = require("../entities/User");
+const Post_1 = require("../entities/Post");
+let PaginatedPost = class PaginatedPost {
+};
+__decorate([
+    (0, type_graphql_1.Field)(() => [Post_1.Post]),
+    __metadata("design:type", Array)
+], PaginatedPost.prototype, "posts", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => Boolean),
+    __metadata("design:type", Boolean)
+], PaginatedPost.prototype, "hasMore", void 0);
+PaginatedPost = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], PaginatedPost);
+exports.PaginatedPost = PaginatedPost;
 let RegisterResponse = class RegisterResponse {
 };
 __decorate([

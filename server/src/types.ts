@@ -11,5 +11,5 @@ export class FieldError {
 
 export interface MyContext {
   res: Response;
-  req: Request;
+  req: Request & { locals: { username: string } };
 }

@@ -1,21 +1,42 @@
-import { Arg, Args, Ctx, Mutation, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Args,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from 'type-graphql';
 import {
   LoginResponse,
   RegisterResponse,
   RegisterVariables,
 } from '../types/types';
-import { Profile, User } from '../entities';
+import { isUser } from './../middlewares/isUser';
+import { Profile } from '../entities/Profile';
+import { User } from '../entities/User';
 import { validate } from 'class-validator';
 import { formatErrors } from '../lib/utils';
 import { createTokenCookie } from '../utils/tokenHandler';
-import { MyContext } from 'src/types';
+import { MyContext } from '../types';
+import { COOKIE_NAME } from '../constants';
 // import {formatErrors} from '../../lib/utils'
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  getUser(@Arg('username') username: string) {
+    return User.findOne({ username });
+  }
+
+  @Query(() => User, { nullable: true })
+  @UseMiddleware(isUser)
+  me(@Ctx() { res }: MyContext) {
+    return User.findOne({ username: res.locals.username });
+  }
+
   @Mutation(() => RegisterResponse)
   async register(
-    @Ctx() { res }: MyContext,
     @Args() { email, username, password }: RegisterVariables
   ): Promise<RegisterResponse> {
     let errors = [];
@@ -46,7 +67,7 @@ export class UserResolver {
     try {
       await user.save();
       await Profile.create({ username: user.username }).save();
-      createTokenCookie(user, res);
+
       return { ok: true };
     } catch (error) {
       console.log('Register error', error);
@@ -59,6 +80,7 @@ export class UserResolver {
 
   @Mutation(() => LoginResponse)
   async login(
+    @Ctx() { res }: MyContext,
     @Arg('usernameOrEmail') usernameOrEmail: string,
     @Arg('password') password: string
   ): Promise<LoginResponse> {
@@ -84,9 +106,20 @@ export class UserResolver {
         };
       }
 
+      createTokenCookie(user, res);
       return { ok: true, user };
     } catch (error) {
       return { ok: false };
     }
+  }
+
+  //Logout
+  @Mutation(() => Boolean)
+  logout(@Ctx() { res }: MyContext) {
+    return new Promise((resolve) => {
+      res.clearCookie(COOKIE_NAME);
+
+      resolve(true);
+    });
   }
 }

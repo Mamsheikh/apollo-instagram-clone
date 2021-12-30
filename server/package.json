@@ -17,17 +17,20 @@
     "apollo-server-express": "^2.25.2",
     "argon2": "^0.28.3",
     "class-validator": "^0.13.2",
+    "cloudinary": "^1.27.1",
     "cookie-parser": "^1.4.6",
     "graphql": "^15.8.0",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
     "type-graphql": "^1.1.1",
-    "typeorm": "0.2.41"
+    "typeorm": "0.2.41",
+    "typeorm-seeding": "^1.6.1"
   },
   "scripts": {
     "watch": "tsc -w ",
     "start": "nodemon dist/index.js",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+    "seed": "npx tsc && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
   }
 }

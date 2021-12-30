@@ -1,0 +1,22 @@
+query GETPOSTS {
+  getposts {
+    id
+    caption
+    createdAt
+    updatedAt
+    imgURL
+    username
+    userLike
+    likeCount
+    user {
+      id
+      username
+      email
+    }
+    comments {
+      id
+      postId
+      text
+    }
+  }
+}

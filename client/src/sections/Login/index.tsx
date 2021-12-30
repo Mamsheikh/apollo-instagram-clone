@@ -1,14 +1,13 @@
 import { Formik, Form } from 'formik';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { AiFillFacebook } from 'react-icons/ai';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import logoLight from './assets/logo-light.png';
 import appStore from './assets/app-store.png';
 import playStore from './assets/gg-play.png';
-import { InputField } from '../../lib/components';
+import { ButtonLoader, InputField } from '../../lib/components';
 import { useLoginMutation } from '../../generated/graphql';
-export const Login = () => {
-  const navigate = useNavigate();
+
+export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [login] = useLoginMutation();
   return (
     <div className=' bg-[#FAFAFA] p-8 flex justify-center'>
@@ -33,7 +32,7 @@ export const Login = () => {
                   });
                 }
                 if (data?.login.ok) {
-                  navigate('/');
+                  history.push('/');
                 }
               } catch (error) {}
             }}
@@ -58,7 +57,7 @@ export const Login = () => {
                   } my-4 block w-full rounded bg-blue-500 hover:bg-blue-400 transform  p-1 text-white`}
                 >
                   {isSubmitting ? (
-                    <AiOutlineLoading3Quarters className='mx-auto text-3xl' />
+                    <ButtonLoader color='light' />
                   ) : (
                     <span>Log In</span>
                   )}

@@ -1,6 +1,16 @@
 import { ArgsType, Field, ObjectType } from 'type-graphql';
 import { FieldError } from '../types';
 import { User } from '../entities/User';
+import { Post } from '../entities/Post';
+
+@ObjectType()
+export class PaginatedPost {
+  @Field(() => [Post])
+  posts: Post[];
+
+  @Field(() => Boolean)
+  hasMore: boolean;
+}
 
 @ObjectType()
 export class RegisterResponse {
